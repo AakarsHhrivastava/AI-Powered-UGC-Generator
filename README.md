@@ -18,7 +18,8 @@ Turn boring **product photos on plain backgrounds** into **photorealistic lifest
 ## 📸 Example
 | Input (Plain) | Output (Lifestyle) |
 |---------------|---------------------|
-| ![](examples/input_dress.png) | ![](examples/output_lifestyle.png) |
+| ![](![e0945f2199a1d5b000d6a9c370246b3d](https://github.com/user-attachments/assets/894ca847-b724-48ea-91ef-f3663d7c2fe3)
+) | ![](examples/output_lifestyle.png) |
 
 ## 🏗️ How it Works
 1. User uploads a product image via form.  
