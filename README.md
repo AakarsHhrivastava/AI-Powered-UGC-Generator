@@ -18,7 +18,7 @@ Turn boring **product photos on plain backgrounds** into **photorealistic lifest
 ## 📸 Example
 | Input (Plain) | Output (Lifestyle) |
 |---------------|---------------------|
-![](![e0945f2199a1d5b000d6a9c370246b3d](https://github.com/user-attachments/assets/894ca847-b724-48ea-91ef-f3663d7c2fe3)|![](https://github.com/user-attachments/assets/a907a85b-829e-4f5f-910d-23f6ca276d1b)
+(![e0945f2199a1d5b000d6a9c370246b3d](https://github.com/user-attachments/assets/894ca847-b724-48ea-91ef-f3663d7c2fe3)|![](https://github.com/user-attachments/assets/a907a85b-829e-4f5f-910d-23f6ca276d1b)
 
 
 ## 🏗️ How it Works
