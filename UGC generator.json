@@ -1,0 +1,256 @@
+{
+  "name": "google image",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Advertise Image Generator",
+        "formDescription": "Convert Simple image into high quality product image",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Product Image",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".jpg, .png",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Character Model",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Male"
+                  },
+                  {
+                    "option": "Female"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Generate ✨"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        288
+      ],
+      "id": "b7c328f4-5e1f-4435-8923-17d0ab8b4866",
+      "name": "On form submission",
+      "webhookId": "3b255328-041e-4e2e-bca8-176e9846ac7e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6355ac9e-1f4c-42a3-8167-8bb8298cd369",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "dc98bc1c-4048-4fcb-80c5-73dc99b78ddd",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(',')[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "8033a47e-f50c-43ae-b404-99d0fb5cf4eb",
+              "name": "mime",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(';')[0].split(':')[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "0e516163-02cc-4242-ba70-ac2bce94d2dd",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        288
+      ],
+      "id": "3105ad69-d890-4480-8148-9a036af7e5ef",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        288
+      ],
+      "id": "37e41c75-e486-42b1-890a-717a35389413",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "Product_Image",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        288
+      ],
+      "id": "c49016ce-75c8-4143-aaee-df6a9a420878",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst updatedItems = items.map((item) => {\n  const base64Url = item?.json?.data;\n  const url = `data:image/png;base64,${base64Url}`;\n  return { url };\n});\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        288
+      ],
+      "id": "e161af10-377b-4b02-af75-25f964b70b37",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "returnBinary",
+        "completionTitle": "Image Generation Completed",
+        "completionMessage": "Generated Image Will be Automatically Downloaded in Your Device",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        720,
+        288
+      ],
+      "id": "06876083-d44e-45a8-a483-475ed785fae8",
+      "name": "Form",
+      "webhookId": "60191061-42cf-4116-ba6a-a93931099c53"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview:free\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"This image is a picture of a product. Generate a new, photorealistic image of a {{ $('On form submission').item.json['Character Model'] }} fashion model actively using this exact product in a natural setting. The {{ $('On form submission').item.json['Character Model'] }} model should look happy and engaged with the product. Pay close attention to the product's design, colors, and details from the reference image.\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": \"{{ $json.url }}\"\n          }\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        288
+      ],
+      "id": "9d85245d-6d26-4ba7-88bf-ad0ce5135131",
+      "name": "HTTP Request",
+      "credentials": {
+        "openRouterApi": {
+          "id": "lIZdCrSKFtL8R9sb",
+          "name": "OpenRouter account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6a230faf-2f61-48d2-a3b6-90779dae1b4d",
+  "meta": {
+    "instanceId": "bd5b2651355eb9ac17e46d7b6cdee8f9fea16a4940c9fa9079ec203fb76b46aa"
+  },
+  "id": "ZHvQTMayP3R6ojN8",
+  "tags": []
+}
